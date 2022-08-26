@@ -1,0 +1,18 @@
+{
+  "Relayers": ["rly"],
+
+  "ChainSets": [
+
+    [
+      {
+        "Name": "gaia",
+        "Version": "latest"
+      },
+      {
+        "Name": "juno",
+        "Version": "latest"
+      }
+    ]
+
+  ]
+}

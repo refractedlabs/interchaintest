@@ -9,6 +9,7 @@ import (
 	"sync/atomic"
 
 	"github.com/strangelove-ventures/ibctest/ibc"
+	"github.com/strangelove-ventures/ibctest/label"
 )
 
 // ChainSpec is a wrapper around an ibc.ChainConfig
@@ -66,6 +67,39 @@ func (s *ChainSpec) Config() (*ibc.ChainConfig, error) {
 
 		return s.applyConfigOverrides(s.ChainConfig)
 	}
+
+	// -- WIP -- DAN --
+
+	// V V THIS DOES NOT WORK V V
+
+	// chainLabel := label.Chain(strings.ToLower(s.Name))
+	// if !chainLabel.IsKnown() && s.ChainConfig.Name == "" && s.Name != "" && s.ChainConfig.IsFullyConfigured() {
+	// 	fmt.Println("CHECK 1", s.Name)
+	// 	s.ChainConfig.Name = s.Name
+	// 	fmt.Println("CHECK 2")
+	// 	label.RegisterChainLabel(chainLabel)
+	// 	fmt.Println("CHECK 3")
+	// 	return s.applyConfigOverrides(s.ChainConfig)
+	// }
+
+	// V V THIS FIXES NONCONFIGURED CHAINS, BUT BREAKS CONFIGURED CHAINS V V
+
+	if s.ChainConfig.Name == "" && s.Name != "" {
+		fmt.Println("CHECK 1", s.Name)
+		chainLabel := label.Chain(s.Name)
+		s.ChainConfig.Name = s.Name
+		if !chainLabel.IsKnown() {
+			fmt.Println("CHECK 2", s.Name)
+			label.RegisterChainLabel(label.Chain(s.Name))
+		}
+	}
+
+	if s.ChainConfig.IsFullyConfigured() {
+		fmt.Println("CHECK 3!!", s.Name)
+		return s.applyConfigOverrides(s.ChainConfig)
+	}
+
+	// -- END WIP  -- DAN --
 
 	// Get built-in config.
 	cfg, ok := builtinChainConfigs[s.Name]

@@ -94,7 +94,7 @@ func (c ChainConfig) MergeChainSpecConfig(other ChainConfig) ChainConfig {
 // to be their respective zero values and for IsFullyConfigured to still report true.
 func (c ChainConfig) IsFullyConfigured() bool {
 	return c.Type != "" &&
-		c.Name != "" &&
+		// c.Name != "" && DAN -- I THINK THIS IS OK TO COMMENT OUT -- WIP
 		c.ChainID != "" &&
 		len(c.Images) > 0 &&
 		c.Bin != "" &&
