@@ -29,7 +29,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	"github.com/cosmos/cosmos-sdk/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authTx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	paramsutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -882,7 +881,7 @@ func (tn *ChainNode) GetTransaction(clientCtx client.Context, txHash string) (*t
 	var txResp *types.TxResponse
 	err := retry.Do(func() error {
 		var err error
-		txResp, err = authTx.QueryTx(clientCtx, txHash)
+		txResp, err = QueryTxWithoutProve(clientCtx, txHash)
 		return err
 	},
 		// retry for total of 3 seconds
