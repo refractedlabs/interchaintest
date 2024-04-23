@@ -1272,6 +1272,30 @@ func (tn *ChainNode) ParamChangeProposal(ctx context.Context, keyName string, pr
 	return tn.ExecTx(ctx, keyName, command...)
 }
 
+// LegacyParamChangeProposal submits a legacy param change proposal to the chain, signed by keyName.
+func (tn *ChainNode) LegacyParamChangeProposal(ctx context.Context, keyName string, prop *paramsutils.ParamChangeProposalJSON) (string, error) {
+	content, err := json.Marshal(prop)
+	if err != nil {
+		return "", err
+	}
+
+	hash := sha256.Sum256(content)
+	proposalFilename := fmt.Sprintf("%x.json", hash)
+	err = tn.WriteFile(ctx, content, proposalFilename)
+	if err != nil {
+		return "", fmt.Errorf("writing param change proposal: %w", err)
+	}
+
+	proposalPath := filepath.Join(tn.HomeDir(), proposalFilename)
+	command := []string{
+		"gov", "submit-legacy-proposal",
+		"param-change",
+		proposalPath,
+	}
+
+	return tn.ExecTx(ctx, keyName, command...)
+}
+
 // QueryParam returns the state and details of a subspace param.
 func (tn *ChainNode) QueryParam(ctx context.Context, subspace, key string) (*ParamChange, error) {
 	stdout, _, err := tn.ExecQuery(ctx, "params", "subspace", subspace, key)
