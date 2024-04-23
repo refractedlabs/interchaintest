@@ -509,6 +509,15 @@ func (c *CosmosChain) TextProposal(ctx context.Context, keyName string, prop Tex
 	return c.txProposal(txHash)
 }
 
+// LegacyTextProposal submits a legacy text governance proposal to the chain.
+func (c *CosmosChain) LegacyTextProposal(ctx context.Context, keyName string, prop TextProposal) (tx TxProposal, _ error) {
+	txHash, err := c.getFullNode().LegacyTextProposal(ctx, keyName, prop)
+	if err != nil {
+		return tx, fmt.Errorf("failed to submit upgrade proposal: %w", err)
+	}
+	return c.txProposal(txHash)
+}
+
 // ParamChangeProposal submits a param change proposal to the chain, signed by keyName.
 func (c *CosmosChain) ParamChangeProposal(ctx context.Context, keyName string, prop *paramsutils.ParamChangeProposalJSON) (tx TxProposal, _ error) {
 	txHash, err := c.getFullNode().ParamChangeProposal(ctx, keyName, prop)

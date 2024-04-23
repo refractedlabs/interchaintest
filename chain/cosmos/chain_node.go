@@ -1212,6 +1212,21 @@ func (tn *ChainNode) TextProposal(ctx context.Context, keyName string, prop Text
 	return tn.ExecTx(ctx, keyName, command...)
 }
 
+// LegacyTextProposal submits a legacy text governance proposal to the chain.
+func (tn *ChainNode) LegacyTextProposal(ctx context.Context, keyName string, prop TextProposal) (string, error) {
+	command := []string{
+		"gov", "submit-legacy-proposal",
+		"--type", "text",
+		"--title", prop.Title,
+		"--description", prop.Description,
+		"--deposit", prop.Deposit,
+	}
+	if prop.Expedited {
+		command = append(command, "--is-expedited=true")
+	}
+	return tn.ExecTx(ctx, keyName, command...)
+}
+
 func (tn *ChainNode) ConsumerAdditionProposal(ctx context.Context, keyName string, prop ccvclient.ConsumerAdditionProposalJSON) (string, error) {
 	propBz, err := json.Marshal(prop)
 	if err != nil {
@@ -1249,7 +1264,7 @@ func (tn *ChainNode) ParamChangeProposal(ctx context.Context, keyName string, pr
 
 	proposalPath := filepath.Join(tn.HomeDir(), proposalFilename)
 	command := []string{
-		"gov", "submit-legacy-proposal",
+		"gov", "submit-proposal",
 		"param-change",
 		proposalPath,
 	}
